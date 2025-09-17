@@ -29,7 +29,10 @@ app.use(limiter);
 
 // CORS
 app.use(cors({
-    origin: 'http://localhost:3000',
+      origin: [
+        'http://localhost:3000',
+        'https://blog-node-exam.vercel.app'
+    ],
     credentials: true
 }));
 
