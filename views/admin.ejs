@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Modern Blog</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Admin Dashboard</h1>
+                <p>Manage users, articles, and site content</p>
+            </div>
+    
+    <!-- Statistics Overview -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= stats.totalUsers %></h3>
+                <p>Total Users</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= stats.totalArticles %></h3>
+                <p>Total Articles</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= stats.publishedArticles %></h3>
+                <p>Published Articles</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= stats.draftArticles %></h3>
+                <p>Draft Articles</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Management Sections -->
+    <div class="admin-sections">
+        <!-- Users Management -->
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>User Management</h2>
+                <p>Manage registered users and their roles</p>
+            </div>
+            
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Articles</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user => { %>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <strong><%= user.fullName %></strong>
+                                            <br>
+                                            <small>@<%= user.username %></small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><%= user.email %></td>
+                                <td>
+                                    <span class="role-badge role-<%= user.role %>">
+                                        <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                                    </span>
+                                </td>
+                                <td><%= user.articles ? user.articles.length : 0 %></td>
+                                <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="/users/<%= user._id %>" class="btn btn-sm btn-secondary">
+                                            <i class="fas fa-eye"></i>
+                                            View
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Articles Management -->
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>Article Management</h2>
+                <p>Manage all articles and their publication status</p>
+            </div>
+            
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% articles.slice(0, 20).forEach(article => { %>
+                            <tr>
+                                <td>
+                                    <div class="article-info">
+                                        <strong><%= article.title %></strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            <%= article.content.substring(0, 50) %>...
+                                        </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="/users/<%= article.author._id %>">
+                                        <%= article.author.fullName %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="category-tag <%= article.category.toLowerCase() %>">
+                                        <%= article.category %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-<%= article.status %>">
+                                        <%= article.status.charAt(0).toUpperCase() + article.status.slice(1) %>
+                                    </span>
+                                </td>
+                                <td><%= article.views %></td>
+                                <td><%= new Date(article.createdAt).toLocaleDateString() %></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="/articles/<%= article._id %>" class="btn btn-sm btn-secondary">
+                                            <i class="fas fa-eye"></i>
+                                            View
+                                        </a>
+                                        <a href="/articles/<%= article._id %>/edit" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            
+            <% if (articles.length > 20) { %>
+                <div class="table-footer">
+                    <p>Showing first 20 articles. <a href="/articles">View all articles</a></p>
+                </div>
+            <% } %>
+        </section>
+    </div>
+</div>
+
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-3xl);
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 0;
+}
+
+.stat-content p {
+    color: var(--gray-600);
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.admin-sections {
+    space-y: var(--spacing-3xl);
+}
+
+.admin-section {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    margin-bottom: var(--spacing-3xl);
+}
+
+.section-header {
+    padding: var(--spacing-xl);
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+}
+
+.section-header h2 {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--gray-900);
+}
+
+.section-header p {
+    margin: 0;
+    color: var(--gray-600);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.admin-table th {
+    background: var(--gray-50);
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+.article-info {
+    max-width: 300px;
+}
+
+.text-muted {
+    color: var(--gray-500);
+}
+
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.table-footer {
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    text-align: center;
+}
+
+.table-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.table-footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        padding: var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+    </div>
+</div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

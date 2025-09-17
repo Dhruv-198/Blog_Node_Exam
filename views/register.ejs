@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Modern Blog</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <main class="main-content">
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <div class="auth-container">
+    <div class="auth-form">
+        <div class="auth-header">
+            <h1>Join Our Community</h1>
+            <p>Create your account and start sharing</p>
+        </div>
+        
+        <form method="POST" action="/auth/register" class="register-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" id="firstName" name="firstName" class="form-input" 
+                           value="<%= formData.firstName || '' %>" required 
+                           placeholder="First name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" class="form-input" 
+                           value="<%= formData.lastName || '' %>" required 
+                           placeholder="Last name">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-input" 
+                       value="<%= formData.username || '' %>" required 
+                       placeholder="Choose a unique username">
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" 
+                       value="<%= formData.email || '' %>" required 
+                       placeholder="Enter your email">
+            </div>
+            
+            <div class="form-group">
+                <label for="role" class="form-label">Account Type</label>
+                <select id="role" name="role" class="form-select" required>
+                    <option value="">Select account type</option>
+                    <option value="user" <%= (formData.role === 'user') ? 'selected' : '' %>>Regular User</option>
+                    <option value="admin" <%= (formData.role === 'admin') ? 'selected' : '' %>>Administrator</option>
+                </select>
+                <small class="form-help">Choose "Administrator" only if you need to manage articles and users</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-input" 
+                       required placeholder="Create a strong password" minlength="6">
+                <small class="form-help">Password must be at least 6 characters long</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="bio" class="form-label">Bio (Optional)</label>
+                <textarea id="bio" name="bio" class="form-textarea" rows="3" 
+                          placeholder="Tell us a bit about yourself"><%= formData.bio || '' %></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">
+                <i class="fas fa-user-plus"></i>
+                Create Account
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Already have an account? 
+                <a href="/auth/login" class="auth-link">Sign in here</a>
+            </p>
+        </div>
+    </div>
+    
+    <div class="auth-side">
+        <div class="auth-side-content">
+            <h2>Start Your Journey</h2>
+            <p>Join thousands of writers and readers in our growing community. Share your voice and discover amazing stories.</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-globe"></i>
+                    <span>Reach a global audience</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-edit"></i>
+                    <span>Powerful writing tools</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-comments"></i>
+                    <span>Engage with your readers</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-trophy"></i>
+                    <span>Build your reputation</span>
+                </div>
+            </div>
+            
+            <div class="testimonial">
+                <blockquote>
+                    "This platform has helped me share my ideas with the world and connect with like-minded people."
+                </blockquote>
+                <cite>- Happy Writer</cite>
+            </div>
+        </div>
+    </div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

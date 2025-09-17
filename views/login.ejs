@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Modern Blog</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <main class="main-content">
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <div class="auth-container">
+    <div class="auth-form">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to your account</p>
+        </div>
+        
+        <form method="POST" action="/auth/login" class="login-form">
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" 
+                       value="<%= formData.email || '' %>" required 
+                       placeholder="Enter your email">
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-input" 
+                       required placeholder="Enter your password">
+            </div>
+            
+            <div class="form-group">
+                <label for="expectedRole" class="form-label">Login As</label>
+                <select id="expectedRole" name="expectedRole" class="form-select">
+                    <option value="">Any Role</option>
+                    <option value="user">Regular User</option>
+                    <option value="admin">Administrator</option>
+                </select>
+                <small class="form-help">Optional: Specify your expected role for verification</small>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Don't have an account? 
+                <a href="/auth/register" class="auth-link">Create one here</a>
+            </p>
+        </div>
+    </div>
+    
+    <div class="auth-side">
+        <div class="auth-side-content">
+            <h2>Join Our Community</h2>
+            <p>Connect with writers and readers from around the world. Share your stories and discover amazing content.</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-pen"></i>
+                    <span>Write and publish articles</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-users"></i>
+                    <span>Connect with other writers</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-heart"></i>
+                    <span>Like and comment on posts</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Track your article performance</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

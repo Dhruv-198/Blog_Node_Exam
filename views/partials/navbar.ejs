@@ -1,0 +1,95 @@
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <a href="/articles" class="brand-link">
+                <i class="fas fa-blog"></i>
+                <span>Modern Blog</span>
+            </a>
+        </div>
+        
+        <div class="nav-menu" id="nav-menu">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/articles" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>All Articles</span>
+                    </a>
+                </li>
+                
+                <% if (isAuthenticated) { %>
+                    <% if (isAdmin) { %>
+                        <li class="nav-item">
+                            <a href="/articles/my" class="nav-link">
+                                <i class="fas fa-file-alt"></i>
+                                <span>My Articles</span>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="/articles/new" class="nav-link">
+                                <i class="fas fa-plus"></i>
+                                <span>Write Article</span>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="/users/admin" class="nav-link">
+                                <i class="fas fa-cog"></i>
+                                <span>Admin Panel</span>
+                            </a>
+                        </li>
+                    <% } %>
+                    
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-user"></i>
+                            <span><%= user.fullName %></span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="/auth/profile" class="dropdown-link">
+                                    <i class="fas fa-user-edit"></i>
+                                    Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/users/<%= user._id %>" class="dropdown-link">
+                                    <i class="fas fa-eye"></i>
+                                    View Profile
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li>
+                                <a href="/auth/logout" class="dropdown-link">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a href="/auth/login" class="nav-link">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="/auth/register" class="nav-link btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Register</span>
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+        
+        <div class="nav-toggle" id="nav-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </div>
+</nav>

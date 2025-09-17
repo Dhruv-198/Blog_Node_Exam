@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= profileUser.fullName %> - Modern Blog</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <main class="main-content">
+        <div class="container">
+            <div class="profile-header">
+                <h1><%= profileUser.fullName %></h1>
+                <p class="profile-username">@<%= profileUser.username %></p>
+                <% if (profileUser.bio) { %>
+                    <p class="profile-bio"><%= profileUser.bio %></p>
+                <% } %>
+            </div>
+    
+    <div class="profile-container">
+        <div class="profile-sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3><%= profileUser.fullName %></h3>
+                <p class="profile-username">@<%= profileUser.username %></p>
+                <p class="profile-role">
+                    <span class="role-badge role-<%= profileUser.role %>">
+                        <%= profileUser.role.charAt(0).toUpperCase() + profileUser.role.slice(1) %>
+                    </span>
+                </p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-number"><%= userArticles.length %></span>
+                        <span class="stat-label">Published Articles</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number"><%= new Date(profileUser.createdAt).getFullYear() %></span>
+                        <span class="stat-label">Member Since</span>
+                    </div>
+                </div>
+            </div>
+            
+            <% if (isOwnProfile) { %>
+                <div class="profile-menu">
+                    <a href="/auth/profile" class="menu-item">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </a>
+                    <a href="/articles/my" class="menu-item">
+                        <i class="fas fa-file-alt"></i>
+                        My Articles
+                    </a>
+                    <a href="/articles/new" class="menu-item">
+                        <i class="fas fa-plus"></i>
+                        Write Article
+                    </a>
+                </div>
+            <% } %>
+        </div>
+        
+        <div class="profile-content">
+            <div class="user-info">
+                <h2>About <%= profileUser.firstName %></h2>
+                <% if (profileUser.bio) { %>
+                    <p><%= profileUser.bio %></p>
+                <% } else { %>
+                    <p class="no-bio">No bio available.</p>
+                <% } %>
+                
+                <div class="user-details">
+                    <div class="detail-item">
+                        <strong>Joined:</strong>
+                        <%= new Date(profileUser.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        }) %>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Role:</strong>
+                        <span class="role-badge role-<%= profileUser.role %>">
+                            <%= profileUser.role.charAt(0).toUpperCase() + profileUser.role.slice(1) %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-articles">
+                <h2>Published Articles (<%= userArticles.length %>)</h2>
+                
+                <% if (userArticles.length > 0) { %>
+                    <div class="articles-grid">
+                        <% userArticles.forEach(article => { %>
+                            <article class="article-card">
+                                <div class="article-content">
+                                    <div class="article-meta">
+                                        <span class="category-tag <%= article.category.toLowerCase() %>">
+                                            <%= article.category %>
+                                        </span>
+                                        <span class="read-time">
+                                            <i class="fas fa-clock"></i>
+                                            <%= article.readTime %> min read
+                                        </span>
+                                    </div>
+                                    
+                                    <h3 class="article-title">
+                                        <a href="/articles/<%= article._id %>"><%= article.title %></a>
+                                    </h3>
+                                    
+                                    <p class="article-summary">
+                                        <%= article.summary || article.content.substring(0, 150) + '...' %>
+                                    </p>
+                                    
+                                    <div class="article-footer">
+                                        <div class="article-date">
+                                            <i class="fas fa-calendar"></i>
+                                            <%= new Date(article.publishedAt || article.createdAt).toLocaleDateString() %>
+                                        </div>
+                                        
+                                        <div class="article-stats">
+                                            <span class="stat">
+                                                <i class="fas fa-eye"></i>
+                                                <%= article.views %>
+                                            </span>
+                                            <span class="stat">
+                                                <i class="fas fa-heart"></i>
+                                                <%= article.likeCount %>
+                                            </span>
+                                            <span class="stat">
+                                                <i class="fas fa-comment"></i>
+                                                <%= article.commentCount %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="no-articles">
+                        <i class="fas fa-file-alt fa-3x"></i>
+                        <h3>No published articles yet</h3>
+                        <p><%= profileUser.firstName %> hasn't published any articles yet.</p>
+                        <% if (isOwnProfile) { %>
+                            <a href="/articles/new" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Write Your First Article
+                            </a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-bio {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    max-width: 600px;
+    margin: var(--spacing-sm) auto var(--spacing-lg);
+    text-align: center;
+}
+
+.user-info {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--gray-200);
+    margin-bottom: var(--spacing-xl);
+}
+
+.no-bio {
+    color: var(--gray-500);
+    font-style: italic;
+}
+
+.user-details {
+    display: flex;
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--gray-200);
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.user-articles {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--gray-200);
+}
+
+@media (max-width: 768px) {
+    .user-details {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+}
+</style>
+        </div>
+    </div>
+</div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

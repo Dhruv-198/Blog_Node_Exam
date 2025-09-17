@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Modern Blog</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <main class="main-content">
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <div class="container">
+            <div class="profile-header">
+                <h1>My Profile</h1>
+                <p>Manage your account information</p>
+            </div>
+    
+    <div class="profile-container">
+        <div class="profile-sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3><%= user.fullName %></h3>
+                <p class="profile-username">@<%= user.username %></p>
+                <p class="profile-role">
+                    <span class="role-badge role-<%= user.role %>">
+                        <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                    </span>
+                </p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-number"><%= user.articles ? user.articles.length : 0 %></span>
+                        <span class="stat-label">Articles</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number"><%= new Date(user.createdAt).getFullYear() %></span>
+                        <span class="stat-label">Joined</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-menu">
+                <a href="/auth/profile" class="menu-item active">
+                    <i class="fas fa-user"></i>
+                    Profile Settings
+                </a>
+                <a href="/articles/my" class="menu-item">
+                    <i class="fas fa-file-alt"></i>
+                    My Articles
+                </a>
+                <a href="/users/<%= user._id %>" class="menu-item">
+                    <i class="fas fa-eye"></i>
+                    View Public Profile
+                </a>
+            </div>
+        </div>
+        
+        <div class="profile-content">
+            <div class="form-container">
+                <h2>Profile Information</h2>
+                
+                <form method="POST" action="/auth/profile" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-input" 
+                                   value="<%= user.firstName %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" class="form-input" 
+                                   value="<%= user.lastName %>" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bio" class="form-label">Bio</label>
+                        <textarea id="bio" name="bio" class="form-textarea" rows="5" 
+                                  placeholder="Tell us about yourself"><%= user.bio || '' %></textarea>
+                        <small class="form-help">This will be displayed on your public profile</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="info-section">
+                <h3>Account Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Username</label>
+                        <span><%= user.username %></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Email</label>
+                        <span><%= user.email %></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Member Since</label>
+                        <span><%= new Date(user.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        }) %></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Role</label>
+                        <span class="role-badge role-<%= user.role %>">
+                            <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <% if (user.articles && user.articles.length > 0) { %>
+                <div class="recent-articles">
+                    <h3>Recent Articles</h3>
+                    <div class="articles-list">
+                        <% user.articles.slice(0, 5).forEach(article => { %>
+                            <div class="article-item">
+                                <div class="article-info">
+                                    <h4><a href="/articles/<%= article._id %>"><%= article.title %></a></h4>
+                                    <div class="article-meta">
+                                        <span class="status-badge status-<%= article.status %>">
+                                            <%= article.status %>
+                                        </span>
+                                        <span class="article-date">
+                                            <%= new Date(article.createdAt).toLocaleDateString() %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="article-actions">
+                                    <a href="/articles/<%= article._id %>/edit" class="btn btn-sm">Edit</a>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    <a href="/articles/my" class="view-all-link">View all articles →</a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

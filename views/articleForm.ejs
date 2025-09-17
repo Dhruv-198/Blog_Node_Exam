@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= isEdit ? 'Edit Article' : 'Write New Article' %> - Modern Blog</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <main class="main-content">
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <div class="container">
+            <div class="page-header">
+                <h1><%= isEdit ? 'Edit Article' : 'Write New Article' %></h1>
+                <p><%= isEdit ? 'Update your article' : 'Share your thoughts with the world' %></p>
+            </div>
+    
+    <div class="form-container">
+        <form method="POST" action="<%= isEdit ? `/articles/${article._id}/edit` : '/articles/new' %>" class="article-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title" class="form-label">Title *</label>
+                <input type="text" id="title" name="title" class="form-input" 
+                       value="<%= formData.title || '' %>" required 
+                       placeholder="Enter article title">
+            </div>
+            
+            <div class="form-group">
+                <label for="summary" class="form-label">Summary</label>
+                <textarea id="summary" name="summary" class="form-textarea" rows="3" 
+                          placeholder="Brief description of your article (optional)"><%= formData.summary || '' %></textarea>
+            </div>
+            
+            <!-- Image Upload Section -->
+            <div class="form-group">
+                <label for="articleImage" class="form-label">
+                    <i class="fas fa-image"></i>
+                    Article Image
+                </label>
+                <div class="image-upload-container">
+                    <input type="file" id="articleImage" name="articleImage" class="form-file" accept="image/*">
+                    <div class="upload-preview">
+                        <% if (isEdit && formData.featuredImage) { %>
+                            <div class="current-image">
+                                <img src="<%= formData.featuredImage %>" alt="Current article image" class="preview-img">
+                                <p class="image-info">Current image</p>
+                            </div>
+                        <% } %>
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click to upload an image or drag and drop</p>
+                            <small>Maximum file size: 5MB. Supported formats: JPG, PNG, GIF</small>
+                        </div>
+                        <div class="upload-preview-container" id="previewContainer" style="display: none;">
+                            <img id="previewImage" class="preview-img" alt="Preview">
+                            <div class="image-actions">
+                                <button type="button" class="btn-remove" onclick="removeImage()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <small class="form-help">Upload an attractive image for your article</small>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="category" class="form-label">Category *</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="">Select a category</option>
+                        <option value="Technology" <%= formData.category === 'Technology' ? 'selected' : '' %>>Technology</option>
+                        <option value="Lifestyle" <%= formData.category === 'Lifestyle' ? 'selected' : '' %>>Lifestyle</option>
+                        <option value="Travel" <%= formData.category === 'Travel' ? 'selected' : '' %>>Travel</option>
+                        <option value="Food" <%= formData.category === 'Food' ? 'selected' : '' %>>Food</option>
+                        <option value="Health" <%= formData.category === 'Health' ? 'selected' : '' %>>Health</option>
+                        <option value="Business" <%= formData.category === 'Business' ? 'selected' : '' %>>Business</option>
+                        <option value="Education" <%= formData.category === 'Education' ? 'selected' : '' %>>Education</option>
+                        <option value="Entertainment" <%= formData.category === 'Entertainment' ? 'selected' : '' %>>Entertainment</option>
+                        <option value="Sports" <%= formData.category === 'Sports' ? 'selected' : '' %>>Sports</option>
+                        <option value="Other" <%= formData.category === 'Other' ? 'selected' : '' %>>Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="status" class="form-label">Status *</label>
+                    <select id="status" name="status" class="form-select" required>
+                        <option value="draft" <%= formData.status === 'draft' ? 'selected' : '' %>>Draft</option>
+                        <option value="published" <%= formData.status === 'published' ? 'selected' : '' %>>Published</option>
+                        <option value="archived" <%= formData.status === 'archived' ? 'selected' : '' %>>Archived</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="tags" class="form-label">Tags</label>
+                <input type="text" id="tags" name="tags" class="form-input" 
+                       value="<%= formData.tags || '' %>" 
+                       placeholder="Enter tags separated by commas (e.g., javascript, tutorial, web)">
+                <small class="form-help">Tags help readers find your content</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="content" class="form-label">Content *</label>
+                <textarea id="content" name="content" class="form-textarea content-editor" rows="20" 
+                          placeholder="Write your article content here..." required><%= formData.content || '' %></textarea>
+                <small class="form-help">You can use Markdown syntax for formatting</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    <%= isEdit ? 'Update Article' : 'Save Article' %>
+                </button>
+                
+                <a href="<%= isEdit ? `/articles/${article._id}` : '/articles/my' %>" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+                
+                <% if (isEdit) { %>
+                    <a href="/articles/<%= article._id %>" class="btn btn-outline">
+                        <i class="fas fa-eye"></i>
+                        Preview
+                    </a>
+                <% } %>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-resize textarea
+    const textarea = document.getElementById('content');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(this.scrollHeight, 200) + 'px';
+        });
+        
+        // Initial resize
+        textarea.style.height = Math.max(textarea.scrollHeight, 200) + 'px';
+    }
+    
+    // Character count for title
+    const titleInput = document.getElementById('title');
+    if (titleInput) {
+        const maxLength = 200;
+        const helpText = document.createElement('small');
+        helpText.className = 'form-help';
+        helpText.id = 'title-count';
+        titleInput.parentNode.appendChild(helpText);
+        
+        function updateTitleCount() {
+            const remaining = maxLength - titleInput.value.length;
+            helpText.textContent = `${remaining} characters remaining`;
+            helpText.style.color = remaining < 20 ? '#e74c3c' : '#666';
+        }
+        
+        titleInput.addEventListener('input', updateTitleCount);
+        updateTitleCount();
+    }
+    
+    // Image upload handling
+    const imageInput = document.getElementById('articleImage');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file size
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select a valid image file');
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    placeholder.style.display = 'none';
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Drag and drop functionality
+        const uploadContainer = document.querySelector('.image-upload-container');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight(e) {
+            uploadContainer.classList.add('drag-over');
+        }
+        
+        function unhighlight(e) {
+            uploadContainer.classList.remove('drag-over');
+        }
+        
+        uploadContainer.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                imageInput.files = files;
+                const event = new Event('change', { bubbles: true });
+                imageInput.dispatchEvent(event);
+            }
+        }
+    }
+});
+
+function removeImage() {
+    const imageInput = document.getElementById('articleImage');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const previewContainer = document.getElementById('previewContainer');
+    
+    imageInput.value = '';
+    placeholder.style.display = 'block';
+    previewContainer.style.display = 'none';
+}
+</script>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>
